@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="MyStack1" extends="struts-default">
+		<interceptors>
+	    	<interceptor name="encodingInter" class="interceptor.EncodingInterceptor"></interceptor>
+	    	<interceptor-stack name="MyStack">
+	    		<interceptor-ref name="encodingInter"></interceptor-ref>
+	    		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    	</interceptor-stack>
+	    </interceptors>
+	    <default-interceptor-ref name="MyStack"></default-interceptor-ref>
+	</package>
+
+    <package name="Ems" extends="MyStack1" namespace="/ems">
+	   
+	 	<interceptors>
+	    	<interceptor name="loginInter" class="interceptor.LoginInterceptor">
+	    		<param name="includeMethods">AddEmsAction,DeleteMoreEmsAction,DeleteEmsAction,UpdateEmsAction,QuerryEmsByIdAction,ShowAllEmsAction</param>
+	    	</interceptor>
+	    </interceptors>
+	    
+	    <global-results >
+	    	<result name="error" type="redirect">
+	    		/index.jsp
+	    	</result>
+	    </global-results>
+	    
+	    <action name="*" class="action.EmsAction" method="{1}">
+	    	
+	    	<interceptor-ref name="loginInter"></interceptor-ref>
+	    	<result name="addOk" type="redirectAction">
+    			ShowAllEmsAction
+    		</result>
+    		<result name="addError" >
+    			/ems/addEmp.jsp
+    		</result>
+    		<result name="deleteOk" type="redirectAction">
+    			ShowAllEmsAction
+    		</result>
+    		<result name="deleteMoreOk" type="redirectAction">
+    			ShowAllEmsAction
+    		</result>
+    		<result name="deleteError" type="redirectAction">
+    			ShowAllEmsAction
+    		</result>
+    		<result name="updateOk" type="redirectAction">
+    			ShowAllEmsAction
+    		</result>
+    		<result name="updateError">
+    			/ems/updateEmp.jsp
+    		</result>
+    		<result name="queryOk">
+    			/ems/updateEmp.jsp
+    		</result>
+    		<result name="showOk">
+    			/ems/emplist.jsp
+    		</result>
+	    </action> 
+	</package>  
+	
+	<package name="Manager"  extends="MyStack1"  namespace="/manager">
+		 <action name="*" class="action.ManagerAction" method="{1}">		
+		 	<result name="loginOk" type="redirectAction"> 	
+    			<param name="namespace">/ems</param>
+    			<param name="actionName">ShowAllEmsAction</param>
+    		</result>
+    		<result name="loginError">
+    			/ems/login.jsp
+    		</result>
+    		<result name="registOk" type="redirectAction">
+    			<param name="namespace">/ems</param>
+    			<param name="actionName">ShowAllEmsAction</param>
+    		</result>
+    		<result name="registError">
+    			/ems/regist.jsp
+    		</result>
+		 </action>
+	</package>
+	
+	<package name="exit1" extends="struts-default">
+		<action name="ExitAction" class="action.ExitAction">
+			<result name="exit" type="redirect">/ems/login.jsp</result>
+		</action>
+	</package>
+	
+	<package name="uploadFile" extends="struts-default" namespace="/uploadFile">
+		<action name="upload" class="action.FileUploadAction">
+			<result name="ok" type="redirect">/index.jsp</result>
+		</action>
+		
+	</package>
+</struts>	    
